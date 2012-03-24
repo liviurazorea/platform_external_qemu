@@ -33,6 +33,7 @@
 
 #include "argos-config.h"
 #include "argos-tag.h"
+#include "argos-types.h"
 
 
 #define ARGOS_BITMAP_OFF(addr)	((addr) >> 3) 

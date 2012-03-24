@@ -33,6 +33,7 @@
 
 #include "argos-config.h"
 #include "argos-tag.h"
+#include "argos-types.h"
 #include <string.h>
 
 //#define BYTEMAP_DEBUG

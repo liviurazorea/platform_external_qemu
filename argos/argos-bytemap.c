@@ -32,9 +32,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "osdep.h"
 #include "argos-config.h"
-#include "cpu.h"
-#include "argos.h"
 #include "argos-bytemap.h"
 
 
@@ -47,7 +46,7 @@ argos_bytemap_create(size_t len)
 #endif
 	map = (argos_bytemap_t *)qemu_vmalloc(len);
 	if (!map) {
-		qemu_fprintf(stderr, "[ARGOS] Not enough memory\n");
+		fprintf(stderr, "[ARGOS] Not enough memory\n");
 		exit(1);
 	}
 	return map;
@@ -63,7 +62,7 @@ argos_bytemap_createz(size_t len)
 #endif
 	map = (argos_bytemap_t *)qemu_vmalloc(len);
 	if (!map) {
-		qemu_fprintf(stderr, "[ARGOS] Not enough memory\n");
+		fprintf(stderr, "[ARGOS] Not enough memory\n");
 		exit(1);
 	}
 	memset(map, 0, len);

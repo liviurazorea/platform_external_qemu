@@ -31,9 +31,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "osdep.h"
 #include "argos-config.h"
-#include "cpu.h"
-#include "argos.h"
 #include "argos-bitmap.h"
 #include "argos-assert.h"
 
