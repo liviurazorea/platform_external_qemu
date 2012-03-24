@@ -530,6 +530,15 @@ TELEPHONY_SOURCES := \
 LOCAL_SRC_FILES += $(TELEPHONY_SOURCES:%=telephony/%)
 EMULATOR_LIBQEMU_CFLAGS += -I$(LOCAL_PATH)/telephony
 
+# argos taint tracking
+
+ARGOS_SOURCES := \
+    argos-bitmap.c \
+    argos-bytemap.c
+
+LOCAL_SRC_FILES += $(ARGOS_SOURCES:%=argos/%)
+EMULATOR_LIBQEMU_CFLAGS += -I$(LOCAL_PATH)/argos
+
 # sources inherited from upstream, but not fully
 # integrated into android emulator
 #
