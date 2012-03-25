@@ -23,6 +23,8 @@
 /* address in the RAM (different from a physical address) */
 typedef unsigned long ram_addr_t;
 
+#include "argos/argos-types.h"
+extern argos_memmap_t *argos_memmap;
 /* memory API */
 
 typedef void CPUWriteMemoryFunc(void *opaque, target_phys_addr_t addr, uint32_t value);

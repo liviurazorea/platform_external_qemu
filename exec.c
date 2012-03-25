@@ -119,6 +119,9 @@ int phys_ram_fd;
 static int in_migration;
 
 RAMList ram_list = { .blocks = QLIST_HEAD_INITIALIZER(ram_list) };
+
+/* shadow map for taint tracking */
+argos_memmap_t *argos_memmap;
 #endif
 
 CPUState *first_cpu;
