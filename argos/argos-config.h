@@ -1,37 +1,37 @@
-/* Copyright (c) 2006-2008, Georgios Portokalidis
-   All rights reserved.
-
-   Redistribution and use in source and binary forms, with or without
-   modification, are permitted provided that the following conditions
-   are met:
-
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above
-      copyright notice, this list of conditions and the following
-      disclaimer in the documentation and/or other materials provided
-      with the distribution.
-    * Neither the name of the Vrije Universiteit nor the names of its
-      contributors may be used to endorse or promote products derived
-      from this software without specific prior written permission.
-
-   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-   FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-   COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-   INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-   (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-   SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-   HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-   STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-   OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+//$lv$ /* Copyright (c) 2006-2008, Georgios Portokalidis
+//$lv$    All rights reserved.
+//$lv$ 
+//$lv$    Redistribution and use in source and binary forms, with or without
+//$lv$    modification, are permitted provided that the following conditions
+//$lv$    are met:
+//$lv$ 
+//$lv$     * Redistributions of source code must retain the above copyright
+//$lv$       notice, this list of conditions and the following disclaimer.
+//$lv$     * Redistributions in binary form must reproduce the above
+//$lv$       copyright notice, this list of conditions and the following
+//$lv$       disclaimer in the documentation and/or other materials provided
+//$lv$       with the distribution.
+//$lv$     * Neither the name of the Vrije Universiteit nor the names of its
+//$lv$       contributors may be used to endorse or promote products derived
+//$lv$       from this software without specific prior written permission.
+//$lv$ 
+//$lv$    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+//$lv$    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+//$lv$    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+//$lv$    FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+//$lv$    COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+//$lv$    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+//$lv$    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+//$lv$    SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+//$lv$    HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+//$lv$    STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+//$lv$    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+//$lv$    OF THE POSSIBILITY OF SUCH DAMAGE.
+//$lv$ */
 #ifndef ARGOS_CONFIG_H
 #define ARGOS_CONFIG_H
 
-#include "config-host.h"
+//$lv$ #include "config-host.h"
 
 //! Memory bytemap
 #define ARGOS_BYTEMAP 0
@@ -43,29 +43,29 @@
 //! Memory tracking model
 #ifdef CONFIG_USER_ONLY
 
-# define ARGOS_MEMMAP ARGOS_PAGEMAP
-# if defined(ARGOS_LOWMEM_MODE)
-#  define ARGOS_INNER_PAGEMAP ARGOS_BITMAP
-# else
-#  define ARGOS_INNER_PAGEMAP ARGOS_BYTEMAP
-# endif
-
-# ifdef ARGOS_NET_TRACKER
-#  undef ARGOS_NET_TRACKER
-# endif
+//$lv$ # define ARGOS_MEMMAP ARGOS_PAGEMAP
+//$lv$ # if defined(ARGOS_LOWMEM_MODE)
+//$lv$ #  define ARGOS_INNER_PAGEMAP ARGOS_BITMAP
+//$lv$ # else
+//$lv$ #  define ARGOS_INNER_PAGEMAP ARGOS_BYTEMAP
+//$lv$ # endif
+//$lv$ 
+//$lv$ # ifdef ARGOS_NET_TRACKER
+//$lv$ #  undef ARGOS_NET_TRACKER
+//$lv$ # endif
 
 #else
 
 # ifdef ARGOS_PAGE_MODE
-#  define ARGOS_MEMMAP ARGOS_PAGEMAP
-#  if defined(ARGOS_LOWMEM_MODE) && !defined(ARGOS_NET_TRACKER)
-#   define ARGOS_INNER_PAGEMAP ARGOS_BITMAP
-#  else 
-#   define ARGOS_INNER_PAGEMAP ARGOS_BYTEMAP
-#  endif
+//$lv$ #  define ARGOS_MEMMAP ARGOS_PAGEMAP
+//$lv$ #  if defined(ARGOS_LOWMEM_MODE) && !defined(ARGOS_NET_TRACKER)
+//$lv$ #   define ARGOS_INNER_PAGEMAP ARGOS_BITMAP
+//$lv$ #  else 
+//$lv$ #   define ARGOS_INNER_PAGEMAP ARGOS_BYTEMAP
+//$lv$ #  endif
 # else
 #  if defined(ARGOS_LOWMEM_MODE) && !defined(ARGOS_NET_TRACKER)
-#   define ARGOS_MEMMAP ARGOS_BITMAP
+//$lv$ #   define ARGOS_MEMMAP ARGOS_BITMAP
 #  else
 #   define ARGOS_MEMMAP ARGOS_BYTEMAP
 #  endif
@@ -73,10 +73,20 @@
 
 #endif
 
-//! Enable MMX tracking
-#define ARGOS_MMX_ENABLE
-//! Enable debugging code
-//#define ARGOS_DEBUG
-//#define ARGOS_DISABLE_MEMTRACK
+//$lv$ //! Enable MMX tracking
+//$lv$ #define ARGOS_MMX_ENABLE
+//$lv$ //! Enable debugging code
+//$lv$ //#define ARGOS_DEBUG
+//$lv$ //#define ARGOS_DISABLE_MEMTRACK
+//$lv$ 
+//$lv$ // Enable assertions for debugging purposes
+//$lv$ #define ASSERTIONS_ENABLE
+//$lv$ 
+//$lv$ // Enable stages by setting the mask size.
+//$lv$ #ifdef ARGOS_NET_TRACKER
+//$lv$ #define ARGOS_STAGE_SIZE 2 // in bytes, this gives us 2^(ARGOS_STAGE_SIZE) stages we can track.
+//$lv$ #endif
+//$lv$ 
+//$lv$ #define ARGOS_TRACKSC_LOG_FILENAME_TEMPLATE "argos.sc.%d"
 
 #endif
