@@ -114,6 +114,8 @@ static unsigned long code_gen_buffer_size;
 static unsigned long code_gen_buffer_max_size;
 uint8_t *code_gen_ptr;
 
+uint8_t *phys_ram_base;
+
 #if !defined(CONFIG_USER_ONLY)
 int phys_ram_fd;
 static int in_migration;

@@ -27,6 +27,7 @@
 #endif  // CONFIG_MEMCHECK
 
 #include "android/utils/debug.h"
+#include "../cpu-common.h"
 
 #define  D(...)  VERBOSE_PRINT(init,__VA_ARGS__)
 
@@ -59,6 +60,9 @@ uint32_t switch_test_write(void *opaque, uint32_t state)
     return state;
 }
 #endif
+
+extern uint8_t *phys_ram_base;
+
 static void android_arm_init_(ram_addr_t ram_size,
     const char *boot_device,
     const char *kernel_filename,
@@ -176,6 +180,8 @@ static void android_arm_init_(ram_addr_t ram_size,
     info.board_id        = 1441;
 
     arm_load_kernel(env, &info);
+	
+	phys_ram_base = qemu_get_ram_ptr(0);
 }
 
 QEMUMachine android_arm_machine = {

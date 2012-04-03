@@ -239,6 +239,7 @@ extern void  android_emulator_set_base_port(int  port);
 #include "libslirp.h"
 #endif
 
+
 #define DEFAULT_RAM_SIZE 128
 
 /* Max number of USB devices that can be specified on the commandline.  */
