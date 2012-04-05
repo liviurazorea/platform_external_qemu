@@ -22,6 +22,8 @@
  * THE SOFTWARE.
  */
 #include "tcg.h"
+#include "../argos/argos-tag.h"
+#include "../argos/pdebug.h"
 
 int gen_new_label(void);
 
@@ -557,10 +559,23 @@ static inline void tcg_gen_ori_i32(TCGv_i32 ret, TCGv_i32 arg1, int32_t arg2)
 
 static inline void tcg_gen_xor_i32(TCGv_i32 ret, TCGv_i32 arg1, TCGv_i32 arg2)
 {
+	TCGContext *s;
+	TCGTemp *ts;
+	int idx;
+
+	s = &tcg_ctx;
+	idx = GET_TCGV_I32(ret);
+	DIE(-1 == idx, "idx is -1");
+	ts = &s->temps[idx];
+	DIE(1 != ts->temp_allocated, "ts is not allocated");
+
     if (TCGV_EQUAL_I32(arg1, arg2)) {
         tcg_gen_movi_i32(ret, 0);
+
+		argos_tag_clear(&ts->tag);
     } else {
         tcg_gen_op3_i32(INDEX_op_xor_i32, ret, arg1, arg2);
+		//TODO: modify and call ARGOS_REG_XOR
     }
 }
 

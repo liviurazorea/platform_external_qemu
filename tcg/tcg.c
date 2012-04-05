@@ -58,6 +58,7 @@
 
 #include "tcg-op.h"
 #include "elf.h"
+#include "../argos/argos-tag.h"
 
 #if defined(CONFIG_USE_GUEST_BASE) && !defined(TCG_TARGET_HAS_GUEST_BASE)
 #error GUEST_BASE not supported on this host.
@@ -428,6 +429,7 @@ static inline int tcg_temp_new_internal(TCGType type, int temp_local)
         ts = &s->temps[idx];
         s->first_free_temp[k] = ts->next_free_temp;
         ts->temp_allocated = 1;
+		argos_tag_clear(&ts->tag);
         assert(ts->temp_local == temp_local);
     } else {
         idx = s->nb_temps;
@@ -440,12 +442,14 @@ static inline int tcg_temp_new_internal(TCGType type, int temp_local)
             ts->temp_allocated = 1;
             ts->temp_local = temp_local;
             ts->name = NULL;
+			argos_tag_clear(&ts->tag);
             ts++;
             ts->base_type = TCG_TYPE_I32;
             ts->type = TCG_TYPE_I32;
             ts->temp_allocated = 1;
             ts->temp_local = temp_local;
             ts->name = NULL;
+			argos_tag_clear(&ts->tag);
             s->nb_temps += 2;
         } else
 #endif
@@ -457,6 +461,7 @@ static inline int tcg_temp_new_internal(TCGType type, int temp_local)
             ts->temp_allocated = 1;
             ts->temp_local = temp_local;
             ts->name = NULL;
+			argos_tag_clear(&ts->tag);
             s->nb_temps++;
         }
     }

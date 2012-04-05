@@ -24,6 +24,7 @@
 #include "qemu-common.h"
 #include "tcg-target.h"
 #include "tcg-runtime.h"
+#include "../argos/argos-tag.h"
 
 #if TCG_TARGET_REG_BITS == 32
 typedef int32_t tcg_target_long;
@@ -259,6 +260,9 @@ typedef struct TCGTemp {
     /* index of next free temp of same base type, -1 if end */
     int next_free_temp;
     const char *name;
+
+	/* ARGOS state */	
+	argos_rtag_t tag;
 } TCGTemp;
 
 typedef struct TCGHelperInfo {
