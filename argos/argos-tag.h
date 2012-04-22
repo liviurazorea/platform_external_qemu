@@ -32,9 +32,10 @@
 #define ARGOS_TAG_H
 
 #include <stdint.h>
-#include "argos-config.h"
+//$$ #include "argos-config.h"
 
 #ifdef TARGET_X86_64
+#error I do not know if this will work
 typedef uint64_t argos_paddr_t;
 #else
 typedef uint32_t argos_paddr_t;
@@ -42,13 +43,14 @@ typedef uint32_t argos_paddr_t;
 
 //! Argos register tag
 #ifdef ARGOS_NET_TRACKER
-struct argos_rtag {
-	argos_paddr_t origin;	//!< Memory origin of register
-	uint32_t netidx;	//!< Network index of data
-};
-
-//! Argos register tag data type
-typedef struct argos_rtag argos_rtag_t;
+#error ARGOS_NET_TRACKER is not implemented
+//$$ struct argos_rtag {
+//$$    argos_paddr_t origin;   //!< Memory origin of register
+//$$    uint32_t netidx;    //!< Network index of data
+//$$ };
+//$$ 
+//$$ //! Argos register tag data type
+//$$ typedef struct argos_rtag argos_rtag_t;
 #else
 //! Argos register tag data type
 typedef argos_paddr_t argos_rtag_t;
@@ -56,66 +58,68 @@ typedef argos_paddr_t argos_rtag_t;
 
 
 #ifdef ARGOS_NET_TRACKER
+#error ARGOS_NET_TRACKER is not implemented
 
-#define argos_tag_netidx(tag)	((tag)->netidx)
-#define argos_tag_set(tag, addr, nidx) 	\
-do {					\
-	(tag)->origin = (addr);		\
-	(tag)->netidx = (nidx);		\
+/* #define argos_tag_netidx(tag)  ((tag)->netidx)
+#define argos_tag_set(tag, addr, nidx)     \
+do {                   \
+   (tag)->origin = (addr);     \
+   (tag)->netidx = (nidx);     \
 } while (0)
-#define argos_tag_copy(dst, src)	\
-do {					\
-	(dst)->origin = (src)->origin;	\
-	(dst)->netidx = (src)->netidx;	\
+#define argos_tag_copy(dst, src)   \
+do {                   \
+   (dst)->origin = (src)->origin;  \
+   (dst)->netidx = (src)->netidx;  \
 } while (0)
 
 #define argos_tag_clear(tag)     ((tag)->origin = 0)
-#define argos_tag_isdirty(tag)	((tag)->origin != 0)
-#define argos_tag_origin(tag)	((tag)->origin)
+#define argos_tag_isdirty(tag) ((tag)->origin != 0)
+#define argos_tag_origin(tag)  ((tag)->origin) */
 
 #else /* !defined(ARGOS_NET_TRACKER)*/
 
 #define argos_tag_set(tag, addr) (*(tag) = (addr))
 #define argos_tag_copy(dst, src)  (*(dst) = *(src))
 #define argos_tag_clear(tag)     (*(tag) = 0)
-#define argos_tag_isdirty(tag)	(*(tag) != 0)
-#define argos_tag_origin(tag)	(*(tag))
+#define argos_tag_isdirty(tag) (*(tag) != 0)
+//$$ #define argos_tag_origin(tag)  (*(tag))
 
 #endif
 
 
-#define argos_tag_comb(dst, src)				\
-do {								\
-	if (argos_tag_isdirty(src)) argos_tag_copy(dst, src);	\
+#define argos_tag_comb(ret, arg1, arg2)                     \
+do {                                                        \
+   if (argos_tag_isdirty(arg1)) argos_tag_copy(ret, arg1);  \
+   if (argos_tag_isdirty(arg2)) argos_tag_copy(ret, arg2);  \
 } while (0)
 
-#define argos_tag_comb2(dst1, dst2, src)\
-do {					\
-	argos_tag_comb(dst1, src);	\
-	argos_tag_comb(dst2, dst1);	\
+/* #define argos_tag_comb2(dst1, dst2, src)\
+do {                   \
+   argos_tag_comb(dst1, src);  \
+   argos_tag_comb(dst2, dst1); \
 } while (0)
 
 #define argos_tag_comb3(dst1, dst2, src)\
-do {					\
-	argos_tag_comb(dst1, src);	\
-	argos_tag_copy(dst2, dst1);	\
+do {                   \
+   argos_tag_comb(dst1, src);  \
+   argos_tag_copy(dst2, dst1); \
 } while (0)
 
-#define argos_tag_comb4(dst1, dst2, src)	\
-do {						\
-	argos_tag_comb(dst1, src);		\
-	if (argos_tag_isdirty(dst1))		\
-		argos_tag_copy(dst2, dst1);	\
-	else					\
-		argos_tag_copy(dst1, dst2);	\
+#define argos_tag_comb4(dst1, dst2, src)   \
+do {                       \
+   argos_tag_comb(dst1, src);      \
+   if (argos_tag_isdirty(dst1))        \
+       argos_tag_copy(dst2, dst1); \
+   else                    \
+       argos_tag_copy(dst1, dst2); \
 } while (0)
 
-#define argos_tag_cc(dst, src1, src2)		\
-do {						\
-	if (argos_tag_isdirty(src1))		\
-		argos_tag_copy(dst, src1);	\
-	else					\
-		argos_tag_copy(dst, src2);	\
+#define argos_tag_cc(dst, src1, src2)      \
+do {                       \
+   if (argos_tag_isdirty(src1))        \
+       argos_tag_copy(dst, src1);  \
+   else                    \
+       argos_tag_copy(dst, src2);  \
 } while (0)
-
+*/
 #endif

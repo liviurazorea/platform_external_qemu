@@ -261,8 +261,8 @@ typedef struct TCGTemp {
     int next_free_temp;
     const char *name;
 
-	/* ARGOS state */	
-	argos_rtag_t tag;
+    /* ARGOS state */	
+    argos_rtag_t tag;
 } TCGTemp;
 
 typedef struct TCGHelperInfo {
@@ -375,7 +375,7 @@ TCGv_i32 tcg_global_mem_new_i32(int reg, tcg_target_long offset,
                                 const char *name);
 TCGv_i32 tcg_temp_new_internal_i32(int temp_local);
 static inline TCGv_i32 tcg_temp_new_i32(void)
-{
+{// instrumented
     return tcg_temp_new_internal_i32(0);
 }
 static inline TCGv_i32 tcg_temp_local_new_i32(void)

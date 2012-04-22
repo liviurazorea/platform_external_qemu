@@ -363,7 +363,7 @@ static void gen_swap_half(TCGv var)
  */
 
 static void gen_add16(TCGv t0, TCGv t1)
-{
+{// instrumented
     TCGv tmp = tcg_temp_new_i32();
     tcg_gen_xor_i32(tmp, t0, t1);
     tcg_gen_andi_i32(tmp, tmp, 0x8000);

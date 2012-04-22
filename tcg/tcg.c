@@ -414,7 +414,7 @@ TCGv_i64 tcg_global_mem_new_i64(int reg, tcg_target_long offset,
 }
 
 static inline int tcg_temp_new_internal(TCGType type, int temp_local)
-{
+{ // instrumented
     TCGContext *s = &tcg_ctx;
     TCGTemp *ts;
     int idx, k;
@@ -429,7 +429,7 @@ static inline int tcg_temp_new_internal(TCGType type, int temp_local)
         ts = &s->temps[idx];
         s->first_free_temp[k] = ts->next_free_temp;
         ts->temp_allocated = 1;
-		argos_tag_clear(&ts->tag);
+        argos_tag_clear(&ts->tag);
         assert(ts->temp_local == temp_local);
     } else {
         idx = s->nb_temps;
@@ -442,14 +442,14 @@ static inline int tcg_temp_new_internal(TCGType type, int temp_local)
             ts->temp_allocated = 1;
             ts->temp_local = temp_local;
             ts->name = NULL;
-			argos_tag_clear(&ts->tag);
+            argos_tag_clear(&ts->tag);
             ts++;
             ts->base_type = TCG_TYPE_I32;
             ts->type = TCG_TYPE_I32;
             ts->temp_allocated = 1;
             ts->temp_local = temp_local;
             ts->name = NULL;
-			argos_tag_clear(&ts->tag);
+            argos_tag_clear(&ts->tag);
             s->nb_temps += 2;
         } else
 #endif
@@ -461,7 +461,7 @@ static inline int tcg_temp_new_internal(TCGType type, int temp_local)
             ts->temp_allocated = 1;
             ts->temp_local = temp_local;
             ts->name = NULL;
-			argos_tag_clear(&ts->tag);
+            argos_tag_clear(&ts->tag);
             s->nb_temps++;
         }
     }
@@ -473,7 +473,7 @@ static inline int tcg_temp_new_internal(TCGType type, int temp_local)
 }
 
 TCGv_i32 tcg_temp_new_internal_i32(int temp_local)
-{
+{// instrumented
     int idx;
 
     idx = tcg_temp_new_internal(TCG_TYPE_I32, temp_local);
@@ -489,7 +489,7 @@ TCGv_i64 tcg_temp_new_internal_i64(int temp_local)
 }
 
 static inline void tcg_temp_free_internal(int idx)
-{
+{// do not instrument
     TCGContext *s = &tcg_ctx;
     TCGTemp *ts;
     int k;
@@ -513,7 +513,7 @@ static inline void tcg_temp_free_internal(int idx)
 }
 
 void tcg_temp_free_i32(TCGv_i32 arg)
-{
+{// do not instrument
     tcg_temp_free_internal(GET_TCGV_I32(arg));
 }
 
@@ -523,7 +523,7 @@ void tcg_temp_free_i64(TCGv_i64 arg)
 }
 
 TCGv_i32 tcg_const_i32(int32_t val)
-{
+{// instrumented
     TCGv_i32 t0;
     t0 = tcg_temp_new_i32();
     tcg_gen_movi_i32(t0, val);

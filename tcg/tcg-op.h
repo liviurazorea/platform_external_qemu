@@ -23,6 +23,7 @@
  */
 #include "tcg.h"
 #include "../argos/argos-tag.h"
+#include "../argos/target-arm/argos-op.h"
 #include "../argos/pdebug.h"
 
 int gen_new_label(void);
@@ -368,15 +369,94 @@ static inline void tcg_gen_br(int label)
     tcg_gen_op1i(INDEX_op_br, label);
 }
 
-static inline void tcg_gen_mov_i32(TCGv_i32 ret, TCGv_i32 arg)
+static inline int argos_comb_twoTCGv_i32(TCGv_i32 ret, TCGv_i32 arg1, TCGv_i32 arg2)
 {
+    TCGContext *s;
+    TCGTemp *ts_ret, *ts_arg1, *ts_arg2;
+    int idx;
+
+    s = &tcg_ctx;
+
+    idx = GET_TCGV_I32(ret);
+    DIE_CONT(-1 == idx, "idx is -1");
+    if (-1 == idx) {
+        return -1;
+    }
+
+    ts_ret = &s->temps[idx];
+    DIE_CONT(1 != ts_ret->temp_allocated, "ts_ret is not allocated");
+    if (1 != ts_ret->temp_allocated) {
+        return -1;
+    }
+
+    idx = GET_TCGV_I32(arg1);
+    DIE_CONT(-1 == idx, "idx is -1");
+    if (-1 == idx) {
+        return -1;
+    }
+
+    ts_arg1 = &s->temps[idx];
+    DIE_CONT(1 != ts_arg1->temp_allocated, "ts_arg1 is not allocated");
+    if (1 != ts_arg1->temp_allocated) {
+        return -1;
+    }
+
+    idx = GET_TCGV_I32(arg2);
+    DIE_CONT(-1 == idx, "idx is -1");
+    if (-1 == idx) {
+        return -1;
+    }
+
+    ts_arg2 = &s->temps[idx];
+    DIE_CONT(1 != ts_arg2->temp_allocated, "ts_arg2 is not allocated");
+    if (1 != ts_arg2->temp_allocated) {
+        return -1;
+    }
+
+    argos_tag_comb(&ts_ret->tag, &ts_arg1->tag, &ts_arg2->tag);
+
+    return 0;
+}
+
+static inline void tcg_gen_mov_i32(TCGv_i32 ret, TCGv_i32 arg)
+{// instrumented
+    TCGContext *s;
+    TCGTemp *ts_ret, *ts_arg;
+    int idx;
+
+    s = &tcg_ctx;
+
+    idx = GET_TCGV_I32(ret);
+    DIE(-1 == idx, "idx is -1");
+    ts_ret = &s->temps[idx];
+    DIE(1 != ts_ret->temp_allocated, "ts_ret is not allocated");
+
+    idx = GET_TCGV_I32(arg);
+    DIE(-1 == idx, "idx is -1");
+    ts_arg = &s->temps[idx];
+    DIE(1 != ts_arg->temp_allocated, "ts_arg is not allocated");
+
     if (!TCGV_EQUAL_I32(ret, arg))
         tcg_gen_op2_i32(INDEX_op_mov_i32, ret, arg);
+
+    argos_tag_copy(&ts_ret->tag, &ts_arg->tag);
 }
 
 static inline void tcg_gen_movi_i32(TCGv_i32 ret, int32_t arg)
-{
+{// instrumented
+    TCGContext *s;
+    TCGTemp *ts_ret;
+    int idx;
+
+    s = &tcg_ctx;
+    idx = GET_TCGV_I32(ret);
+    DIE(-1 == idx, "idx is -1");
+    ts_ret = &s->temps[idx];
+    DIE(1 != ts_ret->temp_allocated, "ts_ret is not allocated");
+
     tcg_gen_op2i_i32(INDEX_op_movi_i32, ret, arg);
+
+    argos_tag_clear(&ts_ret->tag);
 }
 
 /* A version of dh_sizemask from def-helper.h that doesn't rely on
@@ -471,8 +551,13 @@ static inline void tcg_gen_st_i32(TCGv_i32 arg1, TCGv_ptr arg2, tcg_target_long 
 }
 
 static inline void tcg_gen_add_i32(TCGv_i32 ret, TCGv_i32 arg1, TCGv_i32 arg2)
-{
+{// instrumented
+    int err;
+
     tcg_gen_op3_i32(INDEX_op_add_i32, ret, arg1, arg2);
+
+    err = argos_comb_twoTCGv_i32(ret, arg1, arg2);
+    DIE(err, "argos_comb_twoTCGv_i32 error");
 }
 
 static inline void tcg_gen_addi_i32(TCGv_i32 ret, TCGv_i32 arg1, int32_t arg2)
@@ -512,16 +597,39 @@ static inline void tcg_gen_subi_i32(TCGv_i32 ret, TCGv_i32 arg1, int32_t arg2)
 }
 
 static inline void tcg_gen_and_i32(TCGv_i32 ret, TCGv_i32 arg1, TCGv_i32 arg2)
-{
+{// instrumented
+    TCGContext *s;
+    TCGTemp *ts_ret, *ts_arg1, *ts_arg2;
+    int idx;
+
+    s = &tcg_ctx;
+
+    idx = GET_TCGV_I32(ret);
+    DIE(-1 == idx, "idx is -1");
+    ts_ret = &s->temps[idx];
+    DIE(1 != ts_ret->temp_allocated, "ts_ret is not allocated");
+
+    idx = GET_TCGV_I32(arg1);
+    DIE(-1 == idx, "idx is -1");
+    ts_arg1 = &s->temps[idx];
+    DIE(1 != ts_arg1->temp_allocated, "ts_arg1 is not allocated");
+
+    idx = GET_TCGV_I32(arg2);
+    DIE(-1 == idx, "idx is -1");
+    ts_arg2 = &s->temps[idx];
+    DIE(1 != ts_arg2->temp_allocated, "ts_arg2 is not allocated");
+
     if (TCGV_EQUAL_I32(arg1, arg2)) {
         tcg_gen_mov_i32(ret, arg1);
     } else {
         tcg_gen_op3_i32(INDEX_op_and_i32, ret, arg1, arg2);
     }
+
+    argos_tag_comb(&ts_ret->tag, &ts_arg1->tag, &ts_arg2->tag);
 }
 
 static inline void tcg_gen_andi_i32(TCGv_i32 ret, TCGv_i32 arg1, int32_t arg2)
-{
+{// instrumented
     /* some cases can be optimized here */
     if (arg2 == 0) {
         tcg_gen_movi_i32(ret, 0);
@@ -558,24 +666,33 @@ static inline void tcg_gen_ori_i32(TCGv_i32 ret, TCGv_i32 arg1, int32_t arg2)
 }
 
 static inline void tcg_gen_xor_i32(TCGv_i32 ret, TCGv_i32 arg1, TCGv_i32 arg2)
-{
-	TCGContext *s;
-	TCGTemp *ts;
-	int idx;
+{ // instrumented
+    TCGContext *s;
+    TCGTemp *ts_ret, *ts_arg1, *ts_arg2;
+    int idx;
 
-	s = &tcg_ctx;
-	idx = GET_TCGV_I32(ret);
-	DIE(-1 == idx, "idx is -1");
-	ts = &s->temps[idx];
-	DIE(1 != ts->temp_allocated, "ts is not allocated");
+    s = &tcg_ctx;
+    idx = GET_TCGV_I32(ret);
+    DIE(-1 == idx, "idx is -1");
+    ts_ret = &s->temps[idx];
+    DIE(1 != ts_ret->temp_allocated, "ts_ret is not allocated");
 
     if (TCGV_EQUAL_I32(arg1, arg2)) {
         tcg_gen_movi_i32(ret, 0);
-
-		argos_tag_clear(&ts->tag);
     } else {
         tcg_gen_op3_i32(INDEX_op_xor_i32, ret, arg1, arg2);
-		//TODO: modify and call ARGOS_REG_XOR
+
+        idx = GET_TCGV_I32(arg1);
+        DIE(-1 == idx, "idx is -1");
+        ts_arg1 = &s->temps[idx];
+        DIE(1 != ts_arg1->temp_allocated, "ts_arg1 is not allocated");
+
+        idx = GET_TCGV_I32(arg2);
+        DIE(-1 == idx, "idx is -1");
+        ts_arg2 = &s->temps[idx];
+        DIE(1 != ts_arg2->temp_allocated, "ts_arg2 is not allocated");
+
+        ARGOS_REG_XOR(&ts_ret->tag, &ts_arg1->tag, &ts_arg2->tag);
     }
 }
 

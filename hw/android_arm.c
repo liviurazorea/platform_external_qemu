@@ -180,8 +180,8 @@ static void android_arm_init_(ram_addr_t ram_size,
     info.board_id        = 1441;
 
     arm_load_kernel(env, &info);
-	
-	phys_ram_base = qemu_get_ram_ptr(0);
+
+    phys_ram_base = qemu_get_ram_ptr(0);
 }
 
 QEMUMachine android_arm_machine = {
