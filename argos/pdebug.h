@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//#define DIE_DEBUG 1
+
+#ifdef DIE_DEBUG
+
 #define DIE(assertion, call_description)    \
     do {                                    \
         if (assertion) {                    \
@@ -25,5 +29,12 @@
             fflush(stderr);                     \
         }                                       \
     } while(0)
+
+#else
+
+#define DIE(assertion, call_description)
+#define DIE_CONT(assertion, call_description)
+
+#endif
 
 #endif
