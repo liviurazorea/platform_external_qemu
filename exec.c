@@ -41,6 +41,8 @@
 #include "kvm.h"
 #include "hax.h"
 #include "qemu-timer.h"
+#include "argos/argos-tag.h"
+#include "cpu-common.h"
 #if defined(CONFIG_USER_ONLY)
 #include <qemu.h>
 #endif
@@ -3377,23 +3379,24 @@ void cpu_physical_memory_rw(target_phys_addr_t addr, uint8_t *buf,
             if ((pd & ~TARGET_PAGE_MASK) > IO_MEM_ROM &&
                 !(pd & IO_MEM_ROMD)) {
                 target_phys_addr_t addr1 = addr;
+                argos_mtag_t tag = ARGOS_MEM_TAG_CLEAN;
                 /* I/O case */
                 io_index = (pd >> IO_MEM_SHIFT) & (IO_MEM_NB_ENTRIES - 1);
                 if (p)
                     addr1 = (addr & ~TARGET_PAGE_MASK) + p->region_offset;
                 if (l >= 4 && ((addr1 & 3) == 0)) {
                     /* 32 bit read access */
-                    val = io_mem_read[io_index][2](io_mem_opaque[io_index], addr1);
+                    val = ((CPUReadMemoryFuncTagged *)(io_mem_read[io_index][2]))(io_mem_opaque[io_index], addr1, &tag);
                     stl_p(buf, val);
                     l = 4;
                 } else if (l >= 2 && ((addr1 & 1) == 0)) {
                     /* 16 bit read access */
-                    val = io_mem_read[io_index][1](io_mem_opaque[io_index], addr1);
+                    val = ((CPUReadMemoryFuncTagged *)(io_mem_read[io_index][1]))(io_mem_opaque[io_index], addr1, &tag);
                     stw_p(buf, val);
                     l = 2;
                 } else {
                     /* 8 bit read access */
-                    val = io_mem_read[io_index][0](io_mem_opaque[io_index], addr1);
+                    val = ((CPUReadMemoryFuncTagged *)(io_mem_read[io_index][0]))(io_mem_opaque[io_index], addr1, &tag);
                     stb_p(buf, val);
                     l = 1;
                 }

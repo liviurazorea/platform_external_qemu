@@ -13,6 +13,7 @@
 #include "hw/hw.h"
 /* For crc32 */
 #include <zlib.h>
+#include "../argos/argos-tag.h"
 
 /* Number of 2k memory pages available.  */
 #define NUM_PACKETS 4
@@ -494,9 +495,15 @@ static void smc91c111_writeb(void *opaque, target_phys_addr_t offset,
     hw_error("smc91c111_write: Bad reg %d:%x\n", s->bank, (int)offset);
 }
 
-static uint32_t smc91c111_readb(void *opaque, target_phys_addr_t offset)
+static uint32_t smc91c111_readb(void *opaque, target_phys_addr_t offset, argos_mtag_t *ptag)
 {
     smc91c111_state *s = (smc91c111_state *)opaque;
+
+    if (NULL != ptag)
+            *ptag = ARGOS_MEM_TAG_SMC91C111;
+    else {
+        //TODO
+    }
 
     if (offset == 14) {
         return s->bank;
@@ -652,19 +659,19 @@ static void smc91c111_writel(void *opaque, target_phys_addr_t offset,
     smc91c111_writew(opaque, offset + 2, value >> 16);
 }
 
-static uint32_t smc91c111_readw(void *opaque, target_phys_addr_t offset)
+static uint32_t smc91c111_readw(void *opaque, target_phys_addr_t offset, argos_mtag_t *ptag)
 {
     uint32_t val;
-    val = smc91c111_readb(opaque, offset);
-    val |= smc91c111_readb(opaque, offset + 1) << 8;
+    val = smc91c111_readb(opaque, offset, ptag);
+    val |= smc91c111_readb(opaque, offset + 1, ptag) << 8;
     return val;
 }
 
-static uint32_t smc91c111_readl(void *opaque, target_phys_addr_t offset)
+static uint32_t smc91c111_readl(void *opaque, target_phys_addr_t offset, argos_mtag_t *ptag)
 {
     uint32_t val;
-    val = smc91c111_readw(opaque, offset);
-    val |= smc91c111_readw(opaque, offset + 2) << 16;
+    val = smc91c111_readw(opaque, offset, ptag);
+    val |= smc91c111_readw(opaque, offset + 2, ptag) << 16;
     return val;
 }
 
@@ -758,9 +765,9 @@ static ssize_t smc91c111_receive(VLANClientState *vc, const uint8_t *buf, size_t
 }
 
 static CPUReadMemoryFunc *smc91c111_readfn[] = {
-    smc91c111_readb,
-    smc91c111_readw,
-    smc91c111_readl
+    (CPUReadMemoryFunc *)smc91c111_readb,
+    (CPUReadMemoryFunc *)smc91c111_readw,
+    (CPUReadMemoryFunc *)smc91c111_readl
 };
 
 static CPUWriteMemoryFunc *smc91c111_writefn[] = {

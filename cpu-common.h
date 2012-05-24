@@ -17,6 +17,7 @@
 
 #include "bswap.h"
 #include "qemu-queue.h"
+#include "argos/argos-tag.h"
 
 #if !defined(CONFIG_USER_ONLY)
 
@@ -29,6 +30,7 @@ extern argos_memmap_t *argos_memmap;
 
 typedef void CPUWriteMemoryFunc(void *opaque, target_phys_addr_t addr, uint32_t value);
 typedef uint32_t CPUReadMemoryFunc(void *opaque, target_phys_addr_t addr);
+typedef uint32_t CPUReadMemoryFuncTagged(void *opaque, target_phys_addr_t addr, argos_mtag_t *ptag);
 
 void cpu_register_physical_memory_log(target_phys_addr_t start_addr,
                                          ram_addr_t size,
