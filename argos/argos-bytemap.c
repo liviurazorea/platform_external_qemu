@@ -35,6 +35,7 @@
 #include "osdep.h"
 #include "argos-config.h"
 #include "argos-bytemap.h"
+#include "pdebug.h"
 
 
 argos_bytemap_t *
@@ -65,6 +66,7 @@ argos_bytemap_createz(size_t len)
 		fprintf(stderr, "[ARGOS] Not enough memory\n");
 		exit(1);
 	}
+    DIE_CONT(1, "argos_memap is allocated as bytemap");
 	memset(map, 0, len);
 	return map;
 }

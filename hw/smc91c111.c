@@ -14,6 +14,8 @@
 /* For crc32 */
 #include <zlib.h>
 #include "../argos/argos-tag.h"
+#include "../argos/argos-taint.h"
+#include "../argos/pdebug.h"
 
 /* Number of 2k memory pages available.  */
 #define NUM_PACKETS 4
@@ -499,10 +501,12 @@ static uint32_t smc91c111_readb(void *opaque, target_phys_addr_t offset, argos_m
 {
     smc91c111_state *s = (smc91c111_state *)opaque;
 
-    if (NULL != ptag)
+    if (IS_VALID(ptag)) {
             *ptag = ARGOS_MEM_TAG_SMC91C111;
+            DIE_CONT(1, "ADDRESS WAS SUCCESSFULLY TAINTED");
+    }
     else {
-        //TODO
+        DIE_CONT(1, "ERR");
     }
 
     if (offset == 14) {
@@ -663,7 +667,7 @@ static uint32_t smc91c111_readw(void *opaque, target_phys_addr_t offset, argos_m
 {
     uint32_t val;
     val = smc91c111_readb(opaque, offset, ptag);
-    val |= smc91c111_readb(opaque, offset + 1, ptag) << 8;
+    val |= smc91c111_readb(opaque, offset + 1, ptag + 1) << 8;
     return val;
 }
 
@@ -671,7 +675,7 @@ static uint32_t smc91c111_readl(void *opaque, target_phys_addr_t offset, argos_m
 {
     uint32_t val;
     val = smc91c111_readw(opaque, offset, ptag);
-    val |= smc91c111_readw(opaque, offset + 2, ptag) << 16;
+    val |= smc91c111_readw(opaque, offset + 2, ptag + 2) << 16;
     return val;
 }
 

@@ -42,6 +42,9 @@
 #include "hax.h"
 #include "qemu-timer.h"
 #include "argos/argos-tag.h"
+#include "argos/argos-taint.h"
+#include "argos/argos-memmap.h"
+#include "argos/pdebug.h"
 #include "cpu-common.h"
 #if defined(CONFIG_USER_ONLY)
 #include <qemu.h>
@@ -115,6 +118,8 @@ static unsigned long code_gen_buffer_size;
 /* threshold to flush the translated code buffer */
 static unsigned long code_gen_buffer_max_size;
 uint8_t *code_gen_ptr;
+
+uint8_t *phys_ram_base;
 
 #if !defined(CONFIG_USER_ONLY)
 int phys_ram_fd;
@@ -3378,25 +3383,39 @@ void cpu_physical_memory_rw(target_phys_addr_t addr, uint8_t *buf,
         } else {
             if ((pd & ~TARGET_PAGE_MASK) > IO_MEM_ROM &&
                 !(pd & IO_MEM_ROMD)) {
+
                 target_phys_addr_t addr1 = addr;
-                argos_mtag_t tag = ARGOS_MEM_TAG_CLEAN;
+                argos_mtag_t *ptag = argos_memmap + ARGOS_OFFSET(buf);
+
                 /* I/O case */
                 io_index = (pd >> IO_MEM_SHIFT) & (IO_MEM_NB_ENTRIES - 1);
                 if (p)
                     addr1 = (addr & ~TARGET_PAGE_MASK) + p->region_offset;
                 if (l >= 4 && ((addr1 & 3) == 0)) {
                     /* 32 bit read access */
-                    val = ((CPUReadMemoryFuncTagged *)(io_mem_read[io_index][2]))(io_mem_opaque[io_index], addr1, &tag);
+                    if (!IS_VALID(ptag) || !IS_VALID(ptag + 3)) {
+                        PERROR();
+                    }
+                    ptag[3] = ptag[2] = ptag[1] = ptag[0] = ARGOS_MEM_TAG_CLEAN;
+                    val = ((CPUReadMemoryFuncTagged *)(io_mem_read[io_index][2]))(io_mem_opaque[io_index], addr1, ptag);
                     stl_p(buf, val);
                     l = 4;
                 } else if (l >= 2 && ((addr1 & 1) == 0)) {
                     /* 16 bit read access */
-                    val = ((CPUReadMemoryFuncTagged *)(io_mem_read[io_index][1]))(io_mem_opaque[io_index], addr1, &tag);
+                    if (!IS_VALID(ptag) || !IS_VALID(ptag + 1)) {
+                        PERROR();
+                    }
+                    ptag[1] = ptag[0] = ARGOS_MEM_TAG_CLEAN;
+                    val = ((CPUReadMemoryFuncTagged *)(io_mem_read[io_index][1]))(io_mem_opaque[io_index], addr1, ptag);
                     stw_p(buf, val);
                     l = 2;
                 } else {
                     /* 8 bit read access */
-                    val = ((CPUReadMemoryFuncTagged *)(io_mem_read[io_index][0]))(io_mem_opaque[io_index], addr1, &tag);
+                    if (!IS_VALID(ptag)) {
+                        PERROR();
+                    }
+                    ptag[0] = ARGOS_MEM_TAG_CLEAN;
+                    val = ((CPUReadMemoryFuncTagged *)(io_mem_read[io_index][0]))(io_mem_opaque[io_index], addr1, ptag);
                     stb_p(buf, val);
                     l = 1;
                 }

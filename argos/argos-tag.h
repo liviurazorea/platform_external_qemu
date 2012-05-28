@@ -31,8 +31,15 @@
 #ifndef ARGOS_TAG_H
 #define ARGOS_TAG_H
 
+//#include "../hw/sysbus.h"
+//#include "../net.h"
+//#include "../hw/devices.h"
+//#include "../hw/hw.h"
+
 #include <stdint.h>
 #include "argos-config.h"
+#include "argos-types.h"
+
 
 #ifdef TARGET_X86_64
 typedef uint64_t argos_paddr_t;
