@@ -506,7 +506,7 @@ static uint32_t smc91c111_readb(void *opaque, target_phys_addr_t offset, argos_m
             DIE_CONT(1, "ADDRESS WAS SUCCESSFULLY TAINTED");
     }
     else {
-        DIE_CONT(1, "ERR");
+        DIE(1, "ERR");
     }
 
     if (offset == 14) {

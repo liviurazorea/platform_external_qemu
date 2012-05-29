@@ -386,7 +386,7 @@ static inline target_ulong get_phys_addr_code(CPUState *env1, target_ulong addr)
 /* NOTE: this function can trigger an exception */
 /* NOTE2: the returned address is not exactly the physical address: it
    is the offset relative to phys_ram_base */
-static inline target_ulong get_phys_addr_code(CPUState *env1, target_ulong addr)
+static inline target_ulong get_phys_addr_code(CPUState *env1, target_ulong addr, argos_mtag_t *ptag)
 {
     int mmu_idx, page_index, pd;
     void *p;
@@ -395,7 +395,7 @@ static inline target_ulong get_phys_addr_code(CPUState *env1, target_ulong addr)
     mmu_idx = cpu_mmu_index(env1);
     if (unlikely(env1->tlb_table[mmu_idx][page_index].addr_code !=
                  (addr & TARGET_PAGE_MASK))) {
-        ldub_code(addr);
+        ldub_code(addr, ptag);
     }
     pd = env1->tlb_table[mmu_idx][page_index].addr_code & ~TARGET_PAGE_MASK;
     if (pd > IO_MEM_ROM && !(pd & IO_MEM_ROMD)) {
