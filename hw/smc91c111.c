@@ -501,14 +501,6 @@ static uint32_t smc91c111_readb(void *opaque, target_phys_addr_t offset, argos_m
 {
     smc91c111_state *s = (smc91c111_state *)opaque;
 
-    if (IS_VALID(ptag)) {
-            *ptag = ARGOS_MEM_TAG_SMC91C111;
-            PWARNING("ADDRESS WAS SUCCESSFULLY TAINTED");
-    }
-    else {
-        PERROR();
-    }
-
     if (offset == 14) {
         return s->bank;
     }
@@ -600,6 +592,14 @@ static uint32_t smc91c111_readb(void *opaque, target_phys_addr_t offset, argos_m
             {
                 int p;
                 int n;
+
+                if (IS_VALID(ptag)) {
+                        *ptag = ARGOS_MEM_TAG_SMC91C111;
+                        PWARNING("ADDRESS WAS SUCCESSFULLY TAINTED");
+                }
+                else {
+                        PERROR();
+                }
 
                 if (s->ptr & 0x8000)
                     n = s->rx_fifo[0];
