@@ -503,10 +503,10 @@ static uint32_t smc91c111_readb(void *opaque, target_phys_addr_t offset, argos_m
 
     if (IS_VALID(ptag)) {
             *ptag = ARGOS_MEM_TAG_SMC91C111;
-            DIE_CONT(1, "ADDRESS WAS SUCCESSFULLY TAINTED");
+            PWARNING("ADDRESS WAS SUCCESSFULLY TAINTED");
     }
     else {
-        DIE_CONT(1, "ERR");
+        PERROR();
     }
 
     if (offset == 14) {
