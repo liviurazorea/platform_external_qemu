@@ -594,11 +594,14 @@ static uint32_t smc91c111_readb(void *opaque, target_phys_addr_t offset, argos_m
                 int n;
 
                 if (IS_VALID(ptag)) {
-                        *ptag = ARGOS_MEM_TAG_SMC91C111;
+                        *ptag = ARGOS_DEV_TAG_SMC91C111;
                         PWARNING("ADDRESS WAS SUCCESSFULLY TAINTED");
                 }
+                else if (ARGOS_DEV_TAG == (unsigned long)ptag){
+                        PWARNING("LOAD INSTRUCTION SUCCESSFULLY TRACKED");
+                }
                 else {
-                        PERROR();
+                        PWARNING("DEVICE ACCESS IS NOT FULLY TRACKED %p", ptag);
                 }
 
                 if (s->ptr & 0x8000)

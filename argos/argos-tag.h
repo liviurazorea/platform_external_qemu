@@ -46,7 +46,8 @@ typedef uint32_t argos_paddr_t;
 typedef uint8_t argos_mtag_t;
 
 #define ARGOS_MEM_TAG_CLEAN         0
-#define ARGOS_MEM_TAG_SMC91C111     1
+#define ARGOS_DEV_TAG_SMC91C111     1
+#define ARGOS_DEV_TAG               99
 
 //! Argos register tag
 #ifdef ARGOS_NET_TRACKER

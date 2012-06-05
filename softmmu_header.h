@@ -92,7 +92,7 @@ static inline RES_TYPE glue(glue(ld, USUFFIX), MEMSUFFIX)(target_ulong ptr)
     mmu_idx = CPU_MMU_INDEX;
     if (unlikely(env->tlb_table[mmu_idx][page_index].ADDR_READ !=
                  (addr & (TARGET_PAGE_MASK | (DATA_SIZE - 1))))) {
-        res = glue(glue(__ld, SUFFIX), MMUSUFFIX)(addr, mmu_idx);
+        res = glue(glue(__ld, SUFFIX), MMUSUFFIX)(addr, mmu_idx, 0); //0 == clean tag
     } else {
         physaddr = addr + env->tlb_table[mmu_idx][page_index].addend;
         res = glue(glue(ld, USUFFIX), _raw)((uint8_t *)physaddr);
@@ -113,7 +113,7 @@ static inline int glue(glue(lds, SUFFIX), MEMSUFFIX)(target_ulong ptr)
     mmu_idx = CPU_MMU_INDEX;
     if (unlikely(env->tlb_table[mmu_idx][page_index].ADDR_READ !=
                  (addr & (TARGET_PAGE_MASK | (DATA_SIZE - 1))))) {
-        res = (DATA_STYPE)glue(glue(__ld, SUFFIX), MMUSUFFIX)(addr, mmu_idx);
+        res = (DATA_STYPE)glue(glue(__ld, SUFFIX), MMUSUFFIX)(addr, mmu_idx, 0); //0 == clean tag
     } else {
         physaddr = addr + env->tlb_table[mmu_idx][page_index].addend;
         res = glue(glue(lds, SUFFIX), _raw)((uint8_t *)physaddr);
