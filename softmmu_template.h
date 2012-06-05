@@ -70,7 +70,8 @@ static DATA_TYPE glue(glue(slow_ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
                                                         void *retaddr);
 static inline DATA_TYPE glue(io_read, SUFFIX)(target_phys_addr_t physaddr,
                                               target_ulong addr,
-                                              void *retaddr, int ptag)
+                                              void *retaddr,
+                                              unsigned int tag)
 {
     DATA_TYPE res;
     int index;
@@ -84,7 +85,7 @@ static inline DATA_TYPE glue(io_read, SUFFIX)(target_phys_addr_t physaddr,
 
     env->mem_io_vaddr = addr;
 #if SHIFT <= 2
-    res = ((CPUReadMemoryFuncTagged *)(io_mem_read[index][SHIFT]))(io_mem_opaque[index], physaddr, (argos_mtag_t *)ptag);
+    res = ((CPUReadMemoryFuncTagged *)(io_mem_read[index][SHIFT]))(io_mem_opaque[index], physaddr, (argos_mtag_t *)tag);
 #else
 #ifdef TARGET_WORDS_BIGENDIAN
     res = (uint64_t)io_mem_read[index][2](io_mem_opaque[index], physaddr) << 32;
@@ -99,7 +100,8 @@ static inline DATA_TYPE glue(io_read, SUFFIX)(target_phys_addr_t physaddr,
 
 /* handle all cases except unaligned access which span two pages */
 DATA_TYPE REGPARM glue(glue(__ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
-                                                      int mmu_idx, int ptag)
+                                                      int mmu_idx,
+                                                      unsigned int tag)
 {
     DATA_TYPE res;
     int index;
@@ -110,12 +112,6 @@ DATA_TYPE REGPARM glue(glue(__ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
 #ifdef CONFIG_MEMCHECK_MMU
     int invalidate_cache = 0;
 #endif  // CONFIG_MEMCHECK_MMU
-    if (ARGOS_DEV_TAG == ptag) {
-//        PWARNING("__ld successfully received TAG");
-    }
-    else {
-//        PWARNING("__ld did not receive TAG");
-    }
 
     /* test if there is match for unaligned or IO access */
     /* XXX: could done more in memory macro in a non portable way */
@@ -129,7 +125,7 @@ DATA_TYPE REGPARM glue(glue(__ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
                 goto do_unaligned_access;
             retaddr = GETPC();
             ioaddr = env->iotlb[mmu_idx][index];
-            res = glue(io_read, SUFFIX)(ioaddr, addr, retaddr, ptag);
+            res = glue(io_read, SUFFIX)(ioaddr, addr, retaddr, tag);
         } else if (((addr & ~TARGET_PAGE_MASK) + DATA_SIZE - 1) >= TARGET_PAGE_SIZE) {
             /* This is not I/O access: do access verification. */
 #ifdef CONFIG_MEMCHECK_MMU
@@ -216,7 +212,7 @@ static DATA_TYPE glue(glue(slow_ld, SUFFIX), MMUSUFFIX)(target_ulong addr,
             if ((addr & (DATA_SIZE - 1)) != 0)
                 goto do_unaligned_access;
             ioaddr = env->iotlb[mmu_idx][index];
-            res = glue(io_read, SUFFIX)(ioaddr, addr, retaddr, ARGOS_MEM_TAG_CLEAN);
+            res = glue(io_read, SUFFIX)(ioaddr, addr, retaddr, ARGOS_TAG_CLEAN);
         } else if (((addr & ~TARGET_PAGE_MASK) + DATA_SIZE - 1) >= TARGET_PAGE_SIZE) {
         do_unaligned_access:
             /* slow unaligned access (it spans two pages) */

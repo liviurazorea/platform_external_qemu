@@ -944,7 +944,6 @@ static void tcg_out_branch(TCGContext *s, int call, tcg_target_long dest)
         tcg_out_opc(s, call ? OPC_CALL_Jz : OPC_JMP_long, 0, 0, 0);
         tcg_out32(s, disp);
     } else {
-        PERROR("disp != (int32_t)disp");
         tcg_out_movi(s, TCG_TYPE_PTR, TCG_REG_R10, dest);
         tcg_out_modrm(s, OPC_GRP5,
                       call ? EXT5_CALLN_Ev : EXT5_JMPN_Ev, TCG_REG_R10);
@@ -1149,7 +1148,6 @@ static void tcg_out_qemu_ld(TCGContext *s, const TCGArg *args,
     int mem_index, s_bits, arg_idx;
     uint8_t *label_ptr[3];
 #endif
-//    fprintf(stderr, "tcg_out_qemu_ld i386\n");
 
     data_reg = args[0];
     addrlo_idx = 1;
@@ -1237,7 +1235,6 @@ static void tcg_out_qemu_ld(TCGContext *s, const TCGArg *args,
     /* label2: */
     *label_ptr[2] = s->code_ptr - label_ptr[2] - 1;
 #else
-#error [lv] CONFIG_SOFTMMU is not defined
     {
         int32_t offset = GUEST_BASE;
         int base = args[addrlo_idx];

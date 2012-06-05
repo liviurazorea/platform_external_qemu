@@ -3396,7 +3396,7 @@ void cpu_physical_memory_rw(target_phys_addr_t addr, uint8_t *buf,
                     if (!IS_VALID(ptag) || !IS_VALID(ptag + 3)) {
                         PERROR();
                     }
-                    ptag[3] = ptag[2] = ptag[1] = ptag[0] = ARGOS_MEM_TAG_CLEAN;
+                    ptag[3] = ptag[2] = ptag[1] = ptag[0] = ARGOS_TAG_CLEAN;
                     val = ((CPUReadMemoryFuncTagged *)(io_mem_read[io_index][2]))(io_mem_opaque[io_index], addr1, ptag);
                     stl_p(buf, val);
                     l = 4;
@@ -3405,7 +3405,7 @@ void cpu_physical_memory_rw(target_phys_addr_t addr, uint8_t *buf,
                     if (!IS_VALID(ptag) || !IS_VALID(ptag + 1)) {
                         PERROR();
                     }
-                    ptag[1] = ptag[0] = ARGOS_MEM_TAG_CLEAN;
+                    ptag[1] = ptag[0] = ARGOS_TAG_CLEAN;
                     val = ((CPUReadMemoryFuncTagged *)(io_mem_read[io_index][1]))(io_mem_opaque[io_index], addr1, ptag);
                     stw_p(buf, val);
                     l = 2;
@@ -3414,7 +3414,7 @@ void cpu_physical_memory_rw(target_phys_addr_t addr, uint8_t *buf,
                     if (!IS_VALID(ptag)) {
                         PERROR();
                     }
-                    ptag[0] = ARGOS_MEM_TAG_CLEAN;
+                    ptag[0] = ARGOS_TAG_CLEAN;
                     val = ((CPUReadMemoryFuncTagged *)(io_mem_read[io_index][0]))(io_mem_opaque[io_index], addr1, ptag);
                     stb_p(buf, val);
                     l = 1;

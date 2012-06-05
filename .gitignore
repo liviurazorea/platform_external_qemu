@@ -1,4 +1,11 @@
 images/android_icon.o
 objs/*
 *.*~
+.swp
+argos/constante
+argos/documnetatie
+argos/repo-cpu_register_io_memory-output
+argos/repo-smc91c111_readb-output
+argos/repo-smc91c111_readfn-output
+cscope.out
 
