@@ -34,10 +34,14 @@
 #include "argos-config.h"
 #include "argos-bytemap.h"
 #include "argos-bitmap.h"
+#include "../cpu-common.h"
 
 extern uint8_t *phys_ram_base;
+extern ram_addr_t ram_size;
 
-#define ARGOS_OFFSET(p) ((unsigned long)((uint8_t *)(long)(p) - phys_ram_base))
+#define ARGOS_OFFSET(p)         ((unsigned long)((uint8_t *)(long)(p) - phys_ram_base))
+#define ARGOS_CHECK_BOUNDS(p)   (0 <= ARGOS_OFFSET((p)) && ARGOS_OFFSET((p)) < ram_size)
+#define AR_TEST_ADR(p) (phys_ram_base + (p))
 #define ARGOS_ENVMAP_OFFSET(p) ((uint8_t *)(p) - (uint8_t *)(env))
 
 #define ARGOS_MEMMAP_CLRb(p) argos_memmap_clrb(ARGOS_OFFSET(p))

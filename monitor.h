@@ -7,6 +7,9 @@
 #include "qdict.h"
 #include "block.h"
 
+#include "android/config/target-arm/config.h"
+#include "targphys.h"
+
 extern Monitor *cur_mon;
 extern Monitor *default_mon;
 
@@ -76,5 +79,7 @@ Monitor* monitor_fake_new(void* opaque, MonitorFakeFunc cb);
 int      monitor_fake_get_bytes(Monitor* mon);
 void     monitor_fake_free(Monitor* mon);
 #endif
+
+void shadow_memory_dump(target_phys_addr_t addr, uint32_t size, const char *filename);
 
 #endif /* !MONITOR_H */

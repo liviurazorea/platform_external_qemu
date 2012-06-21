@@ -46,6 +46,9 @@
 #include "acl.h"
 #include "exec-all.h"
 
+#include "argos/argos-memmap.h"
+#include "argos/pdebug.h"
+
 //#define DEBUG
 //#define DEBUG_COMPLETION
 
@@ -756,6 +759,44 @@ static void memory_dump(Monitor *mon, int count, int format, int wsize,
         addr += l;
         len -= l;
     }
+}
+
+void shadow_memory_dump(target_phys_addr_t addr, uint32_t size, const char *filename)
+{
+    FILE *f;
+    uint32_t ret;
+
+    fprintf(stderr, "ARGOS_OFFSET: %ld\n", ARGOS_OFFSET(addr));
+
+    if (! ARGOS_CHECK_BOUNDS(addr)) {
+    PERROR();
+    }
+    if (! ARGOS_CHECK_BOUNDS(addr + size)) {
+    PERROR();
+    }
+
+    if (! ARGOS_CHECK_BOUNDS(addr) || ! ARGOS_CHECK_BOUNDS(addr + size)) {
+        PERROR("invalid momory region");
+    }
+
+    addr = (target_phys_addr_t)argos_memmap + ARGOS_OFFSET(addr);
+
+    f = fopen(filename, "wb");
+    if (!f) {
+        PERROR("could not open '%s'\n", filename);
+    }
+
+    ret = fwrite((void *)addr, 1, size, f);
+    if (ret != size) {
+            PERROR();
+    }
+
+    ret = fclose(f);
+    if (ret) {
+            PERROR();
+    }
+
+    PWARNING("shadow dump finished");
 }
 
 #if TARGET_LONG_BITS == 64
